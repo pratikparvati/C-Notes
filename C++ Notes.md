@@ -518,3 +518,317 @@ str += " World";
 // Contents of the string view remain unchanged
 std::cout << view; // Output: "Hello"
 ```
+
+# Notes on `std::bitset`
+
+- `std::bitset` is a C++ class template for representing a fixed-size sequence of bits.
+- Useful for bitwise operations and efficient bit manipulation.
+- Header to include: `<bitset>`.
+
+## Declaration
+- Declare a bitset with a specified number of bits:
+  ```cpp
+  std::bitset<8> bits;  // 8-bit bitset
+  ```
+## Initialization
+- Default Initialization: All bits are initialized to 0.
+   ```cpp
+   std::bitset<8> bits;  // 00000000
+   ```
+- From an unsigned integer: Initializes the bitset from an unsigned integer.
+   ```cpp
+   std::bitset<8> bits(42);  // 00101010
+   ```
+- From a string: Initializes the bitset from a string of 0s and 1s.
+   ```cpp
+   std::bitset<8> bits("1100");  // 00001100
+   ```
+- Accessing Bits: Use the [] operator to access and manipulate individual bits:
+   ```cpp
+   std::bitset<8> bits(42);
+   bool bit = bits[1];  // Accesses the second bit (true)
+   bits[0] = 1;        // Sets the first bit
+   ```
+## Methods
+
+Example
+```cpp
+#include <iostream>
+#include <bitset>
+
+int main() {
+    std::bitset<8> bits("1100");
+
+    std::cout << "Initial bitset: " << bits << std::endl;
+
+    bits.set(1);
+    std::cout << "After setting bit 1: " << bits << std::endl;
+
+    bits.reset(2);
+    std::cout << "After resetting bit 2: " << bits << std::endl;
+
+    bits.flip(3);
+    std::cout << "After flipping bit 3: " << bits << std::endl;
+
+    std::cout << "Any bits set? " << bits.any() << std::endl;
+    std::cout << "None bits set? " << bits.none() << std::endl;
+    std::cout << "All bits set? " << bits.all() << std::endl;
+    std::cout << "Number of bits set: " << bits.count() << std::endl;
+
+    std::cout << "Bitset as string: " << bits.to_string() << std::endl;
+    std::cout << "Bitset as unsigned long: " << bits.to_ulong() << std::endl;
+
+    std::bitset<8> a("1100");
+    std::bitset<8> b("1010");
+
+    std::cout << "a & b: " << (a & b) << std::endl;
+    std::cout << "a | b: " << (a | b) << std::endl;
+    std::cout << "a ^ b: " << (a ^ b) << std::endl;
+    std::cout << "~a: " << ~a << std::endl;
+
+    std::cout << "a << 2: " << (a << 2) << std::endl;
+    std::cout << "a >> 2: " << (a >> 2) << std::endl;
+
+    return 0;
+}
+```
+
+# Variable shadowing (name hiding)
+Each block defines its own scope region. So what happens when we have a variable inside a nested block that has the same name as a variable in an outer block? When this happens, the nested variable “hides” the outer variable in areas where they are both in scope. This is called name hiding or shadowing.
+
+```cpp
+#include <iostream>
+
+int main()
+{ // outer block
+    int apples{5}; // here's the outer block apples
+
+    { // nested block
+        // apples refers to outer block apples here
+        std::cout << apples << '\n'; // print value of outer block apples
+
+        // no inner block apples defined in this example
+
+        apples = 10; // this applies to outer block apples
+
+        std::cout << apples << '\n'; // print value of outer block apples
+    } // outer block apples retains its value even after we leave the nested block
+
+    std::cout << apples << '\n'; // prints value of outer block apples
+
+    return 0;
+} // outer block apples destroyed
+```
+
+```cpp
+#include <iostream>
+int value { 5 }; // global variable
+
+int main()
+{
+    int value { 7 }; // hides the global variable value
+    ++value; // increments local value, not global value
+
+    --(::value); // decrements global value, not local value (parenthesis added for readability)
+
+    std::cout << "local variable value: " << value << '\n';
+    std::cout << "global variable value: " << ::value << '\n';
+
+    return 0;
+} // local value is destroyed
+```
+
+# C++11 Random Library
+
+## Introduction
+
+The C++11 standard introduced a new random library, which provides a more robust and flexible way of generating random numbers. This library is a significant improvement over the traditional `rand()` function and provides a more modern and efficient way of generating random numbers.
+
+## Header File
+
+The random library is included in the `<random>` header file.
+
+## Classes and Functions
+
+The random library provides several classes and functions for generating random numbers. The main classes and functions are:
+
+### `std::random_device`
+
+- A non-deterministic random number generator.
+- Uses external sources of randomness, such as hardware devices.
+- Provides a truly random sequence of numbers.
+
+### `std::mt19937`
+
+- A Mersenne Twister random number generator.
+- A widely used and highly regarded algorithm for generating random numbers.
+- Provides a high-quality sequence of random numbers.
+
+### `std::uniform_int_distribution`
+
+- A distribution class that generates a uniform distribution of integers.
+- Provides a way to generate random numbers within a specific range.
+
+### `std::uniform_real_distribution`
+
+- A distribution class that generates a uniform distribution of floating-point numbers.
+- Provides a way to generate random numbers within a specific range.
+
+### `std::normal_distribution`
+
+- A distribution class that generates a normal distribution of numbers.
+- Provides a way to generate random numbers with a mean and standard deviation.
+
+### Example Usage
+
+Here is an example of how to use the C++11 random library:
+
+```cpp
+#include <random>
+#include <iostream>
+
+int main() {
+  // Create a random device
+  std::random_device rd;
+
+  // Create a Mersenne Twister generator
+  std::mt19937 gen(rd());
+
+  // Create a uniform distribution of integers
+  std::uniform_int_distribution<> dis(1, 10);
+
+  // Generate 10 random numbers
+  for (int i = 0; i < 10; i++) {
+    std::cout << dis(gen) << " ";
+  }
+  return 0;
+}
+```
+
+### Advantages
+
+- Provides a more robust and flexible way of generating random numbers.
+- Provides a non-deterministic random number generator.
+- Provides high-quality random number generators.
+- Provides a way to generate random numbers with specific distributions.
+
+### Notes
+
+- The `std::random_device` class is not available on all platforms.
+- The `std::mt19937 class` is a widely used and highly regarded algorithm, but it is not suitable for cryptographic purposes.
+- The random library provides other classes and functions for generating random numbers, such as `std::poisson_distribution` and `std::exponential_distribution`.
+
+# Type Conversion
+
+Type conversion, also known as type casting, is the process of converting a value of one data type to another. There are two types of type conversion:
+
+## Implicit Type Conversion
+
+Implicit type conversion, also known as automatic type conversion, occurs automatically without the need for a cast. For example:
+
+```cpp
+int x = 5;
+double y = x;  // implicit conversion from int to double
+```
+
+## Explicit Type Conversion
+
+Explicit type conversion, also known as casting, requires a cast operator. There are several types of explicit casts:
+
+### Static Cast
+
+`static_cast` is used for explicit type conversion between related types, such as casting a derived class to its base class. It performs a compile-time check to ensure the cast is safe. For example:
+
+```cpp
+class Animal { ... };
+class Dog : public Animal { ... };
+
+Dog myDog;
+Animal* animalPtr = static_cast<Animal*>(&myDog);  // safe downcast
+```
+
+### Dynamic Cast
+
+`dynamic_cast` is used for explicit type conversion between related types, similar to static_cast, but it performs a runtime check to ensure the cast is safe. For example:
+
+```cpp
+class Animal { ... };
+class Dog : public Animal { ... };
+
+Animal* animalPtr = new Dog;
+Dog* dogPtr = dynamic_cast<Dog*>(animalPtr);  // runtime check
+```
+
+### Reinterpret Cast
+
+`reinterpret_cast` is used for low-level, unsafe type conversion, such as casting between unrelated types or casting a pointer to an integer. It should be used with caution. For example:
+
+```cpp
+int x = 5;
+double y = reinterpret_cast<double&>(x);  // unsafe cast
+```
+
+### Const Cast
+
+`const_cast` is used to cast away the const qualifier from a variable. It is used when you need to modify a variable that is initially declared as const. For example:
+
+```cpp
+const int x = 5;
+int& y = const_cast<int&>(x);  // cast away const
+```
+
+# Type Aliases
+
+Type aliases, introduced in C++11, allow you to create alternative names for existing types. They are defined using the using keyword. For example:
+
+```cpp
+using MyInt = int;  // create a type alias for int
+MyInt x = 5;  // equivalent to int x = 5;
+```
+
+# Type Deduction
+
+Type deduction, introduced in C++11, allows the compiler to automatically deduce the type of a variable or expression. It is used in various contexts, including:
+
+## Auto Keyword
+
+The auto keyword allows the compiler to deduce the type of a variable. For example:
+
+```cpp
+auto x = 5;  // x is deduced to be of type int
+```
+
+When using an `auto` return type (introduced in C++14), all return statements within the function must return values of the same type, otherwise an error will result. For example:
+
+```cpp
+auto someFcn(bool b)
+{
+    if (b)
+        return 5; // return type int
+    else
+        return 6.7; // return type double
+}
+```
+In the above function, the two return statements return values of different types, so the compiler will give an error.
+
+## Template Argument Deduction
+
+Template argument deduction allows the compiler to deduce the types of template arguments. For example:
+
+```cpp
+template <typename T>
+void func(T x) { ... }
+
+func(5);  // T is deduced to be int
+```
+
+## decltype Keyword
+
+The `decltype` keyword allows the compiler to deduce the type of an expression. For example:
+
+```cpp
+int x = 5;
+decltype(x) y = x;  // y is deduced to be of type int
+```
+
+
